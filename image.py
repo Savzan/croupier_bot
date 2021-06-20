@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script file.
+Author : Sawsen
+CARDS AND GAMES
 """
 
 import numpy as np
@@ -10,40 +8,64 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 # Choix de l'atlas des cartes
-base_deck_style = 'deck2.png'
+base_deck_style = 'deck.png'
 
+#Define the motif of the way the atlas and deck is composed
+class Atlas:
+    def __init__(self, row, col, path):
+        self.row = row
+        self.col = col
+        self.path = path
+        self.image = Image.open(path)
 
 # Definition des paramètres des decks
 class Decks:
-    def __init__(self, nb, div, decalage):
-            self.cards = nb
-            self.div_rows = div
-            self.offset = decalage
-            self.row = self.cards / 4
-            self.image = Image.open(base_deck_style)
-            self.pool = []
+    def __init__(self, nb, decalage):
+        self.nb = nb
+        self.offset = decalage
+        self.motif = Atlas(4, 13, base_deck_style)
+        self.pool = []
+    
+    def picture_def(self, row, col, path):
+        self.motif = Atlas(row, col, path)
     
     #Modify the style for the cards
     def change_picture(self, path):
-        self.image = Image.open(path)
+        self.motif.image = Image.open(path)
+        
+    #Change atlas format
+    def modify_atlas(self, row, col, path):
+        self.motif = Atlas(row, col, path)
     
     #Print the selected card
     def draw(self, i):
-        if i > self.cards :
+        #Log error when the card index is out of range
+        if i > self.nb :
             return print('erreur in cards number')
+        
+        #Apply a correction when there is an offset on the atlas
+        cor = 0
+        if self.offset != 0 :
+            cor = 1
+        
         # Caractéristiques des atlas
-        length = self.image.size[0]
-        height = self.image.size[1]
+        length = self.motif.image.size[0]
+        height = self.motif.image.size[1]
+        
         
         # Definitions des coins haut gauche et bas droit de chaque carte 
-        x = ((i%self.div_rows + self.offset) %13) * np.floor(length/13)
-        x2 =((i%self.div_rows + self.offset) %13 + 1) * np.floor(length/13)
-        y = np.floor(i/self.row) *  np.floor(height/4)
-        y2 = (np.floor(i/self.row)+1) * np.floor(height/4)
+        x_index = (i % (self.motif.col - self.offset) + self.offset + cor) % self.motif.col
+        x = x_index * np.floor(length / self.motif.col)
+        x2 =(x_index + 1) * np.floor(length / self.motif.col)
+        
+        y_index = np.floor(i/(self.nb/self.motif.row))
+        y = y_index *  np.floor(height/self.motif.row)
+        y2 = (y_index+1) * np.floor(height/self.motif.row)
+        
         box = (x,y, x2, y2)
        
         # Edition de l'image atlas
-        part = self.image.crop(box)
+        part = self.motif.image.crop(box)
         
         # Log 
         plt.imshow(part)
@@ -57,7 +79,8 @@ class Decks:
             self.pool.append(i)
             i += 1
     
-    #Predefinition for specialized pools
+    
+    #Preset for specialized pools
     def heart_pool(self):
         self.fill_pool(0, 13)
     def diamond_pool(self):
@@ -66,28 +89,44 @@ class Decks:
         self.fill_pool(26, 39)
     def spade_pool(self):
         self.fill_pool(39, 52)
-
+    def tarot_pool(self):
+        self.fill_pool(0, 22)
+    
 
 # Define if the game use 52 or 32 cards
 deck_size = "high"
 
 if deck_size == "high" :
-    deck = Decks(52, 13, 0)
+    deck = Decks(52, 0)
+    deck.fill_pool(0, 52)
     
 if deck_size == "low" :
-    deck = Decks(32, 8, 6)
-
-
-deck.spade_pool()
-
-while len(deck.pool):
-    # elem = np.random.randint(0, len(deck.pool))
-    elem = 0
-    deck.draw(deck.pool[elem])
-    deck.pool.pop(elem)
+    deck = Decks(32, 5)
+    deck.fill_pool(0, 32)
     
+if deck_size == 'tarot' :
+    deck = Decks(22, 0)
+    deck.modify_atlas(2, 11, "tarot.png")
+    deck.tarot_pool()
 
+
+
+#POKER GAME
+class Poker:
+    def __init__(self):
+        self.deck = Decks(52 , 0)
+        self.deck.fill_pool(0, 52)
         
-    
-    
-    
+    def reset(self):
+        self.deck.pool = []
+        self.deck.fill_pool(0,52)
+
+    def draw(self):
+        elem = np.random.randint(0, len(deck.pool))
+        print(len(self.deck.pool))
+        deck.draw(self.deck.pool[elem])
+        deck.pool.pop(elem)
+        
+poker = Poker()
+
+poker.draw()
