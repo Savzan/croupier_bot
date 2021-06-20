@@ -36,13 +36,11 @@ class Decks:
         y = np.floor(i/self.row) *  np.floor(height/4)
         y2 = (np.floor(i/self.row)+1) * np.floor(height/4)
         box = (x,y, x2, y2)
-        print(box)
-        
+       
         # Edition de l'image atlas
         part = self.image.crop(box)
         
         # Log 
-        print(i+1)
         plt.imshow(part)
         plt.show()
         return
@@ -57,11 +55,10 @@ if deck_size == "high" :
 if deck_size == "low" :
     deck = Decks(32, 8, 6)
 
-deck.change_picture('image.jpg')
 
-i = 0
-while i < 52 :
-    deck.draw(i)
-    # Increment loop
-    i+=1
+# i = 0
+# while i < 52 :
+#     deck.draw(i)
+#     # Increment loop
+#     i+=1
 
