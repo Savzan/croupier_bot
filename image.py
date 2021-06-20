@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 # Choix de l'atlas des cartes
-im = Image.open('deck2.png')
+base_deck_style = 'deck2.png'
 
 
 # Definition des paramètres des decks
@@ -20,12 +20,17 @@ class Decks:
             self.div_rows = div
             self.offset = decalage
             self.row = self.cards / 4
-            self.image = Image.open('deck2.png')
+            self.image = Image.open(base_deck_style)
+            self.pool = []
     
+    #Modify the style for the cards
     def change_picture(self, path):
         self.image = Image.open(path)
     
+    #Print the selected card
     def draw(self, i):
+        if i > self.cards :
+            return print('erreur in cards number')
         # Caractéristiques des atlas
         length = self.image.size[0]
         height = self.image.size[1]
@@ -44,6 +49,14 @@ class Decks:
         plt.imshow(part)
         plt.show()
         return
+    
+    #Fill a temp pool to only retrieve cards you want
+    def fill_pool(self, first, last):
+        i = first
+        while i < last :
+            self.pool.append(i)
+            i += 1
+        
 
 
 # Define if the game use 52 or 32 cards
@@ -56,9 +69,15 @@ if deck_size == "low" :
     deck = Decks(32, 8, 6)
 
 
-# i = 0
-# while i < 52 :
-#     deck.draw(i)
-#     # Increment loop
-#     i+=1
+deck.fill_pool(0, 13)
 
+while len(deck.pool):
+    elem = np.random.randint(0, len(deck.pool))
+    deck.draw(deck.pool[elem])
+    deck.pool.pop(elem)
+    
+
+        
+    
+    
+    
