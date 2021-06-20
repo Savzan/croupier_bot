@@ -56,7 +56,16 @@ class Decks:
         while i < last :
             self.pool.append(i)
             i += 1
-        
+    
+    #Predefinition for specialized pools
+    def heart_pool(self):
+        self.fill_pool(0, 13)
+    def diamond_pool(self):
+        self.fill_pool(13, 26)
+    def club_pool(self):
+        self.fill_pool(26, 39)
+    def spade_pool(self):
+        self.fill_pool(39, 52)
 
 
 # Define if the game use 52 or 32 cards
@@ -69,10 +78,11 @@ if deck_size == "low" :
     deck = Decks(32, 8, 6)
 
 
-deck.fill_pool(0, 13)
+deck.spade_pool()
 
 while len(deck.pool):
-    elem = np.random.randint(0, len(deck.pool))
+    # elem = np.random.randint(0, len(deck.pool))
+    elem = 0
     deck.draw(deck.pool[elem])
     deck.pool.pop(elem)
     
