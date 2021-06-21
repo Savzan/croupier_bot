@@ -11,9 +11,10 @@ from PIL import Image
 base_deck_style = 'deck.png'
 
 class Player:
-    def __init__(self):
-        self.pool = []
-        self.jeton = 0
+    def __init__(self, name):
+        self.cards = []
+        self.jeton = 250
+        self.pseudo = name
 
 #Define the motif of the way the atlas and deck is composed
 class Atlas:
@@ -77,8 +78,7 @@ class Decks:
         while i < last :
             self.pool.append(i)
             i += 1
-    
-    
+      
     #Preset for specialized pools
     def heart_pool(self):
         self.fill_pool(0, 13)
@@ -90,7 +90,27 @@ class Decks:
         self.fill_pool(39, 52)
     def tarot_pool(self):
         self.fill_pool(0, 22)
+    #Erase the current pool
+    def empty_pool(self):
+        self.pool = []
     
+    
+# Print X cards merging their pictures       
+def concatcards(src, dst, number) :
+    temp = Image.new('RGBA',(number * dst.size[0], dst.size[1]), (250,250,250, 0))
+    temp.paste(src, (0,0))
+    temp.paste(dst, (src.size[0], 0))
+
+    return temp
+
+
+def showcard(img):
+    #log    
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.imshow(img)
+    plt.show()
+    return
 
 # Define if the game use 52 or 32 cards
 deck_size = "high"
@@ -113,43 +133,114 @@ if deck_size == 'tarot' :
 #POKER GAME
 class Poker:
     def __init__(self):
+        #Decks stats
         self.deck = Decks(52 , 0)
         self.deck.fill_pool(0, 52)
         
+        #Game stats
+        self.players = []
+        self.pot = 0
+        self.river = []
+        self.river_img = Image.new('RGBA', (1,1), (250,250,250,0))
+                
     def reset(self):
         self.deck.pool = []
         self.deck.fill_pool(0,52)
+        self.pot = 0
+        self.river = []
+        self.river_img = Image.new('RGBA', (1,1), (250,250,250,0))
         return
 
     def draw(self):
+        # Draw one random card and remove it from the pool
         elem = np.random.randint(0, len(self.deck.pool))
-        print(len(self.deck.pool))
-        self.deck.draw(self.deck.pool[elem])
         self.deck.pool.pop(elem)
-        return self.deck.draw(self.deck.pool[elem])
- 
-# Print X cards merging their pictures       
-def concatcards(src, dst, number) :
-    temp = Image.new('RGBA',(number * dst.size[0], dst.size[1]), (250,250,250))
-    temp.paste(src, (0,0))
-    temp.paste(dst, (src.size[0], 0))
-
-    #log    
-    plt.gca().axes.get_yaxis().set_visible(False)
-    plt.gca().axes.get_xaxis().set_visible(False)
-    plt.imshow(temp)
-    plt.show()
+        
+        #Return the ID of the card in a classic deck
+        return elem
     
+    #Add a new card on the board, 
+    #flop, turn and river
+    def flop(self):
+        
+        #No more cards in the river
+        if len(self.river) > 4:
+            return
+        
+        #Select a card and add it to the river
+        card_id = self.draw()
+        self.river.append(card_id)
+        
+        #Add the card images to the precedent
+        if len(self.river) == 1:
+            self.river_img = deck.draw(card_id)
+        
+        if len(self.river) > 1 :
+            self.river_img = concatcards(self.river_img, deck.draw(card_id), len(self.river))
+            
+        
+        # log
+        showcard(self.river_img)
+        #Create the river file that is sent to the server
+        self.river_img.save("river.png", format = "png")
+        return
     
-    temp.save("temp.png", format="png")
-    return temp
+    #Add a player to the game
+    def player_draw(self, name):
+        
+        new_player = Player(name)
+        
+        new_player.cards.append(self.draw())
+        new_player.cards.append(self.draw())
+        
+        #Build the hand and send it to the player
+        hand = concatcards(deck.draw(new_player.cards[0]), deck.draw(new_player.cards[1]) , 2)
+        
+        showcard(hand)
+        hand.save("temp.png", format = "png")
+        
+        #Add the player to the list
+        self.players.append(new_player)
+        return
+        
+class QuietYear:
+    def __init__(self):
+        #Decks stats
+        self.deck = Decks(52 , 0)
+        self.season = 1
+        
+        self.deck.heart_pool()
+        print('Spring is here')
+       
+    #Change the season
+    def season_change(self):
+        self.season += 1
+        if self.season == 2:
+            print('Summer is here')
+            self.deck.empty_pool()
+            self.deck.diamond_pool()
+        if self.season == 3:
+            print('Fall is here')
+            self.deck.empty_pool()
+            self.deck.club_pool()
+        if self.season == 4:
+            print('Winter is here')
+            self.deck.empty_pool()
+            self.deck.spade_pool()
+    def draw(self):
+        # Draw one random card and remove it from the pool
+        elem = np.random.randint(0, len(self.deck.pool))
+        showcard(deck.draw(self.deck.pool[elem]))
+        
+        #Remove it from the pool
+        self.deck.pool.pop(elem)
+        return 
 
 
-poker = Poker()
+quiet = QuietYear()
 
-part = concatcards(poker.draw(), poker.draw(), 2)
+quiet.season_change()
+quiet.season_change()
+quiet.season_change()
 
-part = concatcards(part, poker.draw(), 3)
-part = concatcards(part, poker.draw(), 4)
-part = concatcards(part, poker.draw(), 5)
-
+    
