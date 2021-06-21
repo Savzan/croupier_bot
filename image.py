@@ -10,6 +10,11 @@ from PIL import Image
 # Choix de l'atlas des cartes
 base_deck_style = 'deck.png'
 
+class Player:
+    def __init__(self):
+        self.pool = []
+        self.jeton = 0
+
 #Define the motif of the way the atlas and deck is composed
 class Atlas:
     def __init__(self, row, col, path):
@@ -63,14 +68,8 @@ class Decks:
         y2 = (y_index+1) * np.floor(height/self.motif.row)
         
         box = (x,y, x2, y2)
-       
-        # Edition de l'image atlas
-        part = self.motif.image.crop(box)
         
-        # Log 
-        plt.imshow(part)
-        plt.show()
-        return
+        return self.motif.image.crop(box)
     
     #Fill a temp pool to only retrieve cards you want
     def fill_pool(self, first, last):
@@ -120,13 +119,37 @@ class Poker:
     def reset(self):
         self.deck.pool = []
         self.deck.fill_pool(0,52)
+        return
 
     def draw(self):
-        elem = np.random.randint(0, len(deck.pool))
+        elem = np.random.randint(0, len(self.deck.pool))
         print(len(self.deck.pool))
-        deck.draw(self.deck.pool[elem])
-        deck.pool.pop(elem)
-        
+        self.deck.draw(self.deck.pool[elem])
+        self.deck.pool.pop(elem)
+        return self.deck.draw(self.deck.pool[elem])
+ 
+# Print X cards merging their pictures       
+def concatcards(src, dst, number) :
+    temp = Image.new('RGBA',(number * dst.size[0], dst.size[1]), (250,250,250))
+    temp.paste(src, (0,0))
+    temp.paste(dst, (src.size[0], 0))
+
+    #log    
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.imshow(temp)
+    plt.show()
+    
+    
+    temp.save("temp.png", format="png")
+    return temp
+
+
 poker = Poker()
 
-poker.draw()
+part = concatcards(poker.draw(), poker.draw(), 2)
+
+part = concatcards(part, poker.draw(), 3)
+part = concatcards(part, poker.draw(), 4)
+part = concatcards(part, poker.draw(), 5)
+
