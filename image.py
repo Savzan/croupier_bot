@@ -237,10 +237,10 @@ class QuietYear:
         return 
 
 
-quiet = QuietYear()
+text = open('quiet.txt', 'r')
+lines = text.readlines()
 
-quiet.season_change()
-quiet.season_change()
-quiet.season_change()
+print(lines[3])
+
 
     
