@@ -7,7 +7,10 @@ Created on Thu Jun 17 20:07:12 2021
 
 import discord
 from discord.ext import commands
+
+
 import logging
+
 
 ## Enable logging in the command for the discord bot
 logger = logging.getLogger('discord')
@@ -17,10 +20,13 @@ handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(me
 logger.addHandler(handler)
 
 
-bot = commands.Bot(command_prefix='')
+bot = commands.Bot(command_prefix='!')
 
-@bot.command()
+@bot.command(name = 'poker', help = 'test')
 async def ping(ctx):
-    await ctx.send('pong')
-
-bot.run('ODU1MTU4MjIzMTE5NTgxMTk0.YMuaKA.74Ha5MQIw6Pfup-VUA2E4L6dWiU')
+    await ctx.send(file=discord.File('temp.png'))
+    
+    
+text = open('token', 'r')
+lines = text.readlines()
+bot.run(lines[0])
