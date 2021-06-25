@@ -11,6 +11,9 @@ from discord.ext import commands
 
 import logging
 
+#cd .\dev\test_python_bot\
+#py -3 test_bot_discord.py
+
 
 ## Enable logging in the command for the discord bot
 logger = logging.getLogger('discord')
