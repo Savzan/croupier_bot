@@ -130,8 +130,7 @@ if deck_size == 'tarot' :
     deck.tarot_pool()
 
 
-
-#POKER GAME
+#%% POKER GAME
 class Poker:
     def __init__(self):
         #Decks stats
@@ -203,7 +202,159 @@ class Poker:
         #Add the player to the list
         self.players.append(new_player)
         return
+  
+    def __color_check(full_hand, player):
+        return ''
+    
+    def __winner_check(self):
+        return
         
+# Quinte, Color, Square, Brelan, Pair, High 
+__str_score = 'Q0 C0 S0 Sq0 B0 P000 H0'
+__value = ['d', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c']
+score = list(__str_score)
+
+
+
+#river = [10, 41, 32, 51, 9]
+river = [10,10,10,9,9]
+hand = [6,6]
+
+temp = []
+temp.extend(hand)
+temp.extend(river)
+temp.sort()
+
+#Check for color
+h, d, s, c = [],[],[],[]
+
+for card in temp :
+    if card < 13 :
+        h.append(card)
+    if card > 12  and card < 26 :
+        d.append(card)
+    if card > 25 and card < 39 :
+        c.append(card)
+    if card > 38 :
+        s.append(card)
+
+color = []   
+#Create a temp array holder to determine if there is a color    
+col = []
+col.append(h)
+col.append(d)
+col.append(c)
+col.append(s)
+
+i = 0
+#Check for the longest list of the 4 for the quinte check
+while i < len(col):
+    if len(col[i]) > 4 :
+        color = col[i]
+        if color[0] == 0 :
+            score[4] = __value[0]
+            break
+        score[4] = __value[color[-1]%13]    
+    i += 1
+
+
+#check for best value pair, triple, square on the board
+
+c = Counter(np.mod(temp, 13))
+print(c)
+#card number
+print(list(c.keys()))
+#number of iterations
+print(list(c.values()))
+
+i = 0
+while i < len(list(c)):
+    if list(c.values())[i] == 2 :
+        #Select best pair
+        if score[17] == 0 :
+            score[17] = __value[list(c.keys())[i]]
+        
+        if __value[list(c.keys())[i]] > score[17] :
+            score[18] = score[17]
+            score[17] = __value[list(c.keys())[i]]
+        
+        if  __value[list(c.keys())[i]] < score[17] and __value[list(c.keys())[i]] > 18 :
+            score[18] = __value[list(c.keys())[i]] < score[17]
+    
+        
+    if list(c.values())[i] == 3 :
+        #Brelan score
+        score[14] = __value[list(c.keys())[i]]
+        
+    if list(c.values())[i] == 4 :
+        #Square score
+        score[11] = __value[list(c.keys())[i]]
+        
+    i += 1
+
+#highest on hand
+high_hand = Counter(np.mod(hand, 13))
+if (list(high_hand.values())[0] > 1) and score[18] != list(high_hand.keys())[0]:
+    score[19] = __value[list(Counter(high_hand).keys())[0]]
+
+score[22] = __value[list(high_hand)[-1]]
+if list(high_hand)[0] == 0 :
+    score[22] = __value[0]
+    
+
+#check for straight
+c = list(c)
+straight = []
+
+if len(c) > 4 :
+    i = 0
+    while i < len(c) - 4 :
+        if c[i + 4]%13 == (c[i] + 4)%13:
+            score[7] = __value[c[i+4]%13] 
+            j = 0
+            while j < 5 :
+                straight.append(c[i+j])
+                j += 1
+        
+        #Test while the first card is an Ace
+        if c[i] == 0:
+            #Test for the wheel straight that can only be beaten by the broadway
+            if c[i + 4]%13 == 4:
+                score[7] = __value[0] 
+                j = 0
+                while j < 5 :
+                    straight.append(c[i+j])
+                    j += 1
+                
+            #Test for the broadway straight 
+            if c[-4]%13 == 9 :
+                score[7] = 'e'
+                
+                j = 0
+                while j > -4 :
+                    straight.append(c[i+j])
+                    j -= 1
+            break
+        i += 1
+
+
+#Check for quinte 
+a = set(color)
+b = set(straight)
+
+
+if (a.issubset(b) or b.issubset(a)) and ((len(a) and len(b)) > 4):
+    score[1] = __value[straight[-1]%13]
+    if straight[0] == 0 :
+        score[1] = __value[0]    
+
+
+#SCORE
+str_score = ''.join(score)
+print('score : ' + str_score)
+
+#%% Quiet Year program
+    
 class QuietYear:
     def __init__(self):
         #Decks stats
@@ -236,66 +387,3 @@ class QuietYear:
         #Remove it from the pool
         self.deck.pool.pop(elem)
         return 
-
-# Quinte, Color, Square, Full, Brelan, Pair, High 
-str_score = 'Q0 C0 S0 F0 B0 P00 H0'
-score = list(str_score)
-
-value = ['d', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c']
-
-river = [0, 1, 2, 3, 4]
-hand = [11, 12, 10, 9]
-
-temp = []
-temp.extend(hand)
-temp.extend(river)
-temp.sort()
-print(temp)
-
-#Check for color
-
-h = 0
-d = 0
-s = 0 
-c = 0
-
-for card in temp :
-    if card < 13 :
-        h += 1
-    if card > 12  and card < 26 :
-        d += 1
-    if card > 25 and card < 39 :
-        c += 1
-    if card > 38 :
-        s =+ 1
-
-print('heart ' + str(h) + ' diamond ' + str(d) + ' club ' + str(c) +  ' spade' + str(s))
-
-if (h or c or d or s)  >  4 :    
-    score[4] = '1'
-    str_score = ''.join(score)
-    print(str_score)
-    
-#check for straight
-
-
-
-# concat = river
-# concat.extend(hand)
-# key = np.mod(concat, 13)
-# concat = np.array(concat, dtype = str)
-
-# print(concat)
-# i = 0
-
-# while i < len(concat) :
-#     print(i)
-#     concat[i] = value[key[i]]
-#     i += 1
-# print(concat)
-
-# # concat.sort()
-# # concat = np.mod(concat, 13)
-
-# b = dict(Counter(concat))
-# print(b)
