@@ -406,6 +406,8 @@ class QuietYear:
         elem = np.random.randint(0, len(self.deck.pool))
         showcard(deck.draw(self.deck.pool[elem]))
         
+        if self.deck.pool[elem] == 51 :
+            print('The year is finally over [END]')
         #Remove it from the pool
         self.deck.pool.pop(elem)
         return 
