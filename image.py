@@ -6,6 +6,7 @@ CARDS AND GAMES
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+from collections import Counter
 
 # Choix de l'atlas des cartes
 base_deck_style = 'deck.png'
@@ -236,11 +237,65 @@ class QuietYear:
         self.deck.pool.pop(elem)
         return 
 
+# Quinte, Color, Square, Full, Brelan, Pair, High 
+str_score = 'Q0 C0 S0 F0 B0 P00 H0'
+score = list(str_score)
 
-text = open('quiet.txt', 'r')
-lines = text.readlines()
+value = ['d', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c']
 
-print(lines[3])
+river = [0, 1, 2, 3, 4]
+hand = [11, 12, 10, 9]
 
+temp = []
+temp.extend(hand)
+temp.extend(river)
+temp.sort()
+print(temp)
 
+#Check for color
+
+h = 0
+d = 0
+s = 0 
+c = 0
+
+for card in temp :
+    if card < 13 :
+        h += 1
+    if card > 12  and card < 26 :
+        d += 1
+    if card > 25 and card < 39 :
+        c += 1
+    if card > 38 :
+        s =+ 1
+
+print('heart ' + str(h) + ' diamond ' + str(d) + ' club ' + str(c) +  ' spade' + str(s))
+
+if (h or c or d or s)  >  4 :    
+    score[4] = '1'
+    str_score = ''.join(score)
+    print(str_score)
     
+#check for straight
+
+
+
+# concat = river
+# concat.extend(hand)
+# key = np.mod(concat, 13)
+# concat = np.array(concat, dtype = str)
+
+# print(concat)
+# i = 0
+
+# while i < len(concat) :
+#     print(i)
+#     concat[i] = value[key[i]]
+#     i += 1
+# print(concat)
+
+# # concat.sort()
+# # concat = np.mod(concat, 13)
+
+# b = dict(Counter(concat))
+# print(b)
