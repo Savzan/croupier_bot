@@ -160,10 +160,11 @@ class Poker:
     def __draw(self):
         # Draw one random card and remove it from the pool
         elem = np.random.randint(0, len(self.deck.pool))
+        card_id = self.deck.pool[elem]
         self.deck.pool.pop(elem)
         
         #Return the ID of the card in a classic deck
-        return elem
+        return card_id
     
     #Add a new card on the board, 
     #flop, turn and river
@@ -265,16 +266,23 @@ class Poker:
         while i < len(list(c)):
             if list(c.values())[i] == 2 :
                 #Select best pair
-                if score[17] == 0 :
+ 
+                if score[18] == 0 :
+                    score[18] = self.__value[list(c.keys())[i]]
+                
+                if (self.__value[list(c.keys())[i]] > score[18]) and (score[17] == '0') :
                     score[17] = self.__value[list(c.keys())[i]]
                 
+                if (self.__value[list(c.keys())[i]] < score[17]) and (self.__value[list(c.keys())[i]] > score[18]) :
+                    score[18] = self.__value[list(c.keys())[i]]
+                    
                 if self.__value[list(c.keys())[i]] > score[17] :
                     score[18] = score[17]
                     score[17] = self.__value[list(c.keys())[i]]
-                
-                if  self.__value[list(c.keys())[i]] < score[17] and self.__value[list(c.keys())[i]] > 18 :
-                    score[18] = self.__value[list(c.keys())[i]] < score[17]
-            
+                    
+                if self.__value[list(c.keys())[i]] == 0:
+                    score[17] == self.__value[0]
+                   
                 
             if list(c.values())[i] == 3 :
                 #Brelan score
@@ -287,15 +295,18 @@ class Poker:
             i += 1
         
         #highest on hand
-        high_hand = Counter(np.mod(player.cards, 13))
-        if (list(high_hand.values())[0] > 1) and (score[18] != list(high_hand.keys())[0]):
-            score[19] = self.__value[list(Counter(high_hand).keys())[-1]]
         
-        score[22] = self.__value[list(high_hand.keys())[-1]]
-        print(list(high_hand.keys()))
-        if list(high_hand)[0] == 0 :
-            score[22] = self.__value[0]
+        high_hand = np.mod(player.cards, 13)
+        #Case where the player has a pair in hand
+        if high_hand[0] == high_hand[1] :
+            score[19] = self.__value[high_hand[0]]
+            score[22] = self.__value[high_hand[0]]
             
+        #Determine the high hand
+        score[22] = self.__value[high_hand[0]]
+        if high_hand[1] > high_hand[0] :
+            score[22] = self.__value[high_hand[0]]            
+                    
         
         #check for straight
         c = list(c)
