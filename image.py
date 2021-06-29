@@ -369,23 +369,10 @@ class Poker:
             self.__score_check(player)
             if player.score > winner.score :
                 winner = player
+                
+        self.reset()
         return winner
 
-
-
-poker = Poker()
-print('Bob hand :')
-poker.player_draw('Bob')
-print('Alice hand :')
-poker.player_draw('Alice')
-
-poker.flop()
-poker.flop()
-poker.flop()
-poker.flop()
-poker.flop()
-
-print(poker.winner_check().pseudo)
 
 
 #%% Quiet Year program
