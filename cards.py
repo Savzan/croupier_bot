@@ -131,7 +131,7 @@ if deck_size == 'tarot' :
     deck.tarot_pool()
 
 
-#%% POKER GAME
+# POKER GAME
 class Poker:
     def __init__(self):
         #Decks stats
@@ -203,7 +203,8 @@ class Poker:
         #Build the hand and send it to the player
         hand = concatcards(deck.draw(new_player.cards[0]), deck.draw(new_player.cards[1]) , 2)
         
-        showcard(hand)
+        #Log
+        #showcard(hand)
         hand.save("temp.png", format = "png")
         
         #Add the player to the list
@@ -375,7 +376,7 @@ class Poker:
 
 
 
-#%% Quiet Year program
+# Quiet Year program
     
 class QuietYear:
     def __init__(self):
