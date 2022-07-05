@@ -9,7 +9,7 @@ from PIL import Image
 from collections import Counter
 
 # Choix de l'atlas des cartes
-base_deck_style = 'tarot.png'
+base_deck_style = 'deck.png'
 
 class Player:
     def __init__(self, name):
@@ -115,7 +115,7 @@ def showcard(img):
     return
 
 # Define if the game use 52 or 32 cards
-deck_size = "tarot"
+deck_size = "high"
 
 if deck_size == "high" :
     deck = Decks(52, 0)
@@ -381,7 +381,7 @@ class Poker:
 class QuietYear:
     def __init__(self):
         #Decks stats
-        self.deck = Decks(13 , 0)
+        self.deck = Decks(52 , 0)
         self.season = 1
         
         self.deck.heart_pool()
@@ -412,10 +412,3 @@ class QuietYear:
         #Remove it from the pool
         self.deck.pool.pop(elem)
         return 
-    
-    
-showcard(deck.draw(0))
-tmp = concatcards(deck.draw(0), deck.draw(21), 2)
-
-tmp.save("tariver.png", format = "png")
-
