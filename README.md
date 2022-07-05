@@ -37,7 +37,7 @@ As of now, the Poker is full integrated, you could use it, the game is already a
 The game create and send a concatenate image of all the drawn cards. And update each time a new card is drawn as shown above.
 
 # Features not available
-Right now the bot is inactive, it can not scale well as I had to define what a game is and a way for servers to not interact as there at the moment only single instance of games loaded and playable.
-It can only send images in the chat, I wanted it to be able to send private messages to the user with their cards. 
-A complete lack of commands to actually play it directly in the Discord chat. 
-Maybe add some currency to help player gambles with some imaginary points or something. 
+Right now the bot is inactive, it can not scale well as I had to define what a game is and a way for servers to not interact as there is at the moment only single instance of games loaded and playable.
+- It can only send images in the chat, I wanted it to be able to send private messages to the user with their cards. 
+- A complete lack of commands to actually play it directly in the Discord chat. 
+- Maybe add some currency to help player gambles with some imaginary points or something. 
